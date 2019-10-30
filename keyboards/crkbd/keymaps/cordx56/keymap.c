@@ -124,6 +124,8 @@ void set_timelog(void);
 const char *read_timelog(void);
 
 // cordx56 def
+const char *read_colon_logo(void);
+unsigned int logo_last_time = 0;
 void set_totaltime(void);
 const char *read_totaltime(void);
 
@@ -142,7 +144,8 @@ void matrix_render_user(struct CharacterMatrix *matrix) {
     matrix_write_ln(matrix, read_timelog());
     matrix_write(matrix, read_totaltime());
   } else {
-    matrix_write(matrix, read_logo());
+    if (logo_last_time & 32768) matrix_write(matrix, read_colon_logo());
+    else matrix_write(matrix, read_logo());
   }
 }
 
@@ -168,6 +171,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #endif
     set_timelog();
     set_totaltime();
+    logo_last_time = timer_read();
   }
 
   switch (keycode) {
